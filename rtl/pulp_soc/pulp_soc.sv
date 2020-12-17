@@ -1096,4 +1096,7 @@ module pulp_soc import dm::*; #(
     assign s_data_master.b_user         = data_master_b_user_i        ;
     assign data_master_b_readpointer_o  = s_data_master.b_readpointer ;
 
+   // Instantiate dummy module for PULP training
+   dummy_top dummy_top_i;
+   
 endmodule
