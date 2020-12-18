@@ -405,13 +405,20 @@ module pulp_soc import dm::*; #(
         .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
     ) s_data_in_bus ();
 
-
     AXI_BUS #(
         .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
         .AXI_DATA_WIDTH ( AXI_DATA_OUT_WIDTH),
         .AXI_ID_WIDTH   ( AXI_ID_OUT_WIDTH  ),
         .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
-    ) s_data_out_bus ();
+    ) wide_alu_axi_bus ();
+
+   // Wide ALU
+   AXI_BUS #(
+        .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH    ),
+        .AXI_DATA_WIDTH ( AXI_DATA_IN_WIDTH ),
+        .AXI_ID_WIDTH   ( AXI_ID_IN_WIDTH   ),
+        .AXI_USER_WIDTH ( AXI_USER_WIDTH    )
+    ) s_data_in_bus ();
 
     //assign s_data_out_bus.aw_atop = 6'b0;
 
@@ -800,6 +807,7 @@ module pulp_soc import dm::*; #(
         .tcdm_hwpe             ( s_lint_hwpe_bus     ),
         .axi_master_plug       ( s_data_in_bus       ),
         .axi_slave_plug        ( s_data_out_bus      ),
+		.wide_alu_axi          ( wide_alu_axi_bus    ),
         .apb_peripheral_bus    ( s_apb_periph_bus    ),
         .l2_interleaved_slaves ( s_mem_l2_bus        ),
         .l2_private_slaves     ( s_mem_l2_pri_bus    ),
@@ -964,6 +972,16 @@ module pulp_soc import dm::*; #(
              slave_valid <= slave_grant;
          end
      end
+
+   wide_alu_top 
+(
+ .clk_i,
+ .rst_ni,
+ .test_mode_i(1'b0),
+ .axi_i(wide_alu_axi_bus),
+ .reg_o(wide_alu_reg_bus)
+);
+   
 
     //********************************************************
     //*** PAD AND GPIO CONFIGURATION SIGNALS PACK ************
